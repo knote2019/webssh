@@ -41,15 +41,12 @@ jQuery(function($){
   var default_ssh_username = window.DEFAULT_SSH_USERNAME || 'root';
   var default_ssh_password = window.DEFAULT_SSH_PASSWORD || 'cloud1234';
   var status = $('#status'),
-      button = $('.btn-primary'),
-      form_container = $('.form-container'),
       waiter = $('#waiter'),
-      term_type = $('#term'),
+      term_type = 'xterm-256color',
       style = {},
       default_title = 'WebSSH',
       title_element = document.querySelector('title'),
-      form_id = '#connect',
-      debug = document.querySelector(form_id).noValidate,
+      debug = false,
       custom_font = document.fonts ? document.fonts.values().next().value : undefined,
       default_fonts,
       DISCONNECTED = 0,
@@ -331,24 +328,13 @@ jQuery(function($){
     console.log(text);
     status.text(text);
 
-    if (to_populate && validated_form_data) {
-      populate_form(validated_form_data);
-      validated_form_data = undefined;
-    }
-
     if (waiter.css('display') !== 'none') {
       waiter.hide();
-    }
-
-    if (form_container.css('display') === 'none') {
-      form_container.show();
     }
   }
 
 
   function ajax_complete_callback(resp) {
-    button.prop('disabled', false);
-
     if (resp.status !== 200) {
       log_status(resp.status + ': ' + resp.statusText, true);
       state = DISCONNECTED;
@@ -667,19 +653,22 @@ jQuery(function($){
 
 
   function connect_without_options() {
-    // use data from the form
-    var form = document.querySelector(form_id),
-        url = form.action,
-        data;
+    // use data from command line options
+    var form = document.createElement('form'),
+        data = new FormData(form);
 
-    data = new FormData(form);
+    // Set all values from server configuration
+    data.set('hostname', default_ssh_host);
+    data.set('port', default_ssh_port);
+    data.set('username', default_ssh_username);
+    data.set('password', default_ssh_password);
+    data.set('term', term_type);
 
     function ajax_post() {
       status.text('');
-      button.prop('disabled', true);
 
       $.ajax({
-          url: url,
+          url: '/',
           type: 'post',
           data: data,
           complete: ajax_complete_callback,
@@ -703,9 +692,7 @@ jQuery(function($){
 
   function connect_with_options(data) {
     // use data from the arguments
-    var form = document.querySelector(form_id),
-        url = data.url || form.action,
-        _xsrf = form.querySelector('input[name="_xsrf"]');
+    var form = document.createElement('form');
 
     var result = validate_form_data(wrap_object(data));
     if (!result.valid) {
@@ -713,17 +700,15 @@ jQuery(function($){
       return;
     }
 
-    data.term = term_type.val();
-    data._xsrf = _xsrf.value;
+    data.term = term_type;
     if (event_origin) {
       data._origin = event_origin;
     }
 
     status.text('');
-    button.prop('disabled', true);
 
     $.ajax({
-        url: url,
+        url: '/',
         type: 'post',
         data: data,
         complete: ajax_complete_callback
@@ -783,12 +768,6 @@ jQuery(function($){
 
   wssh.connect = connect;
 
-  $(form_id).submit(function(event){
-    event.preventDefault();
-    connect();
-  });
-
-
   function cross_origin_connect(event)
   {
     console.log(event.origin);
@@ -825,27 +804,20 @@ jQuery(function($){
     );
   }
 
-
   parse_url_data(
     decode_uri_component(window.location.search.substring(1)) + '&' + decode_uri_component(window.location.hash.substring(1)),
     form_keys, opts_keys, url_form_data, url_opts_data
   );
-  // console.log(url_form_data);
-  // console.log(url_opts_data);
 
-  if (url_opts_data.term) {
-    term_type.val(url_opts_data.term);
-  }
-
+  // Auto-connect on page load
   if (url_form_data.password === null) {
     log_status('Password via url must be encoded in base64.');
   } else {
     if (get_object_length(url_form_data)) {
-      waiter.show();
       connect(url_form_data);
     } else {
-      restore_items(fields);
-      form_container.show();
+      // Auto-connect with default values
+      connect();
     }
   }
 
