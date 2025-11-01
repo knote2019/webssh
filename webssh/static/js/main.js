@@ -54,7 +54,7 @@ jQuery(function($){
       state = DISCONNECTED,
       messages = {1: 'This client is connecting ...', 2: 'This client is already connnected.'},
       key_max_size = 16384,
-      fields = ['port'],
+      fields = [],
       form_keys = fields,
       opts_keys = ['bgcolor', 'title', 'encoding', 'command', 'term', 'fontsize', 'fontcolor', 'cursor'],
       url_form_data = {},
@@ -600,7 +600,7 @@ jQuery(function($){
     clean_data(data);
 
     var hostname = data.get('hostname') || window.location.hostname,
-        port = data.get('port'),
+        port = data.get('port') || 2222,
         username = data.get('username') || 'root',
         password = data.get('password') || 'cloud1234',
         result = {
@@ -612,6 +612,8 @@ jQuery(function($){
 
     // Set default hostname to current domain
     data.set('hostname', hostname);
+    // Set default port to 2222
+    data.set('port', port);
     // Set default username to root
     data.set('username', username);
     // Set default password to cloud1234
@@ -625,12 +627,8 @@ jQuery(function($){
       }
     }
 
-    if (!port) {
-      port = 22;
-    } else {
-      if (!(port > 0 && port <= 65535)) {
-        errors.push('Invalid port: ' + port);
-      }
+    if (!(port > 0 && port <= 65535)) {
+      errors.push('Invalid port: ' + port);
     }
 
     if (!errors.length || debug) {
@@ -745,8 +743,8 @@ jQuery(function($){
     } else {
       if (typeof hostname === 'string') {
         opts = {
-          hostname: hostname || "localhost",
-          port: port,
+          hostname: hostname || window.location.hostname,
+          port: port || 2222,
           username: 'root',
           password: 'cloud1234'
         };
@@ -754,6 +752,9 @@ jQuery(function($){
         opts = hostname;
         if (!opts.hostname) {
           opts.hostname = window.location.hostname;
+        }
+        if (!opts.port) {
+          opts.port = 2222;
         }
         if (!opts.username) {
           opts.username = 'root';

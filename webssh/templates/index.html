@@ -41,14 +41,6 @@
 
     <div class="container form-container" style="display: none">
       <form id="connect" action="" method="post" enctype="multipart/form-data"{% if debug %} novalidate{% end %}>
-        <div class="row">
-          <div class="col">
-            <label for="Port">Port</label>
-            <input class="form-control" type="number" id="port" name="port" placeholder="22" value="" min=1 max=65535>
-          </div>
-          <div class="col">
-          </div>
-        </div>
         <input type="hidden" id="term" name="term" value="xterm-256color">
         {% module xsrf_form_html() %}
         <button type="submit" class="btn btn-primary">Connect</button>
