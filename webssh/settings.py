@@ -47,6 +47,7 @@ define('timeout', type=float, default=3, help='SSH connection timeout')
 define('delay', type=float, default=3, help='The delay to call recycle_worker')
 define('maxconn', type=int, default=20,
        help='Maximum live connections (ssh sessions) per client')
+define('ssh_port', type=int, default=2222, help='Default SSH port')
 define('font', default='', help='custom font filename')
 define('encoding', default='',
        help='''The default character encoding of ssh servers.
@@ -85,7 +86,8 @@ def get_app_settings(options):
                               os.path.join(base_dir, *font_dirs)),
             font_dirs[1:]
         ),
-        origin_policy=get_origin_setting(options)
+        origin_policy=get_origin_setting(options),
+        ssh_port=options.ssh_port
     )
     return settings
 
