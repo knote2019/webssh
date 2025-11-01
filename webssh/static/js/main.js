@@ -38,6 +38,8 @@ var wssh = {};
 jQuery(function($){
   var default_ssh_host = window.DEFAULT_SSH_HOST || 'localhost';
   var default_ssh_port = window.DEFAULT_SSH_PORT || 2222;
+  var default_ssh_username = window.DEFAULT_SSH_USERNAME || 'root';
+  var default_ssh_password = window.DEFAULT_SSH_PASSWORD || 'cloud1234';
   var status = $('#status'),
       button = $('.btn-primary'),
       form_container = $('.form-container'),
@@ -603,8 +605,8 @@ jQuery(function($){
 
     var hostname = data.get('hostname') || default_ssh_host,
         port = data.get('port') || default_ssh_port,
-        username = data.get('username') || 'root',
-        password = data.get('password') || 'cloud1234',
+        username = data.get('username') || default_ssh_username,
+        password = data.get('password') || default_ssh_password,
         result = {
           valid: false,
           data: data,
@@ -616,9 +618,9 @@ jQuery(function($){
     data.set('hostname', hostname);
     // Set default port
     data.set('port', port);
-    // Set default username to root
+    // Set default username
     data.set('username', username);
-    // Set default password to cloud1234
+    // Set default password
     data.set('password', password);
 
     if (!hostname) {
@@ -747,8 +749,8 @@ jQuery(function($){
         opts = {
           hostname: hostname || default_ssh_host,
           port: port || default_ssh_port,
-          username: 'root',
-          password: 'cloud1234'
+          username: default_ssh_username,
+          password: default_ssh_password
         };
       } else {
         opts = hostname;
@@ -759,10 +761,10 @@ jQuery(function($){
           opts.port = default_ssh_port;
         }
         if (!opts.username) {
-          opts.username = 'root';
+          opts.username = default_ssh_username;
         }
         if (!opts.password) {
-          opts.password = 'cloud1234';
+          opts.password = default_ssh_password;
         }
       }
 

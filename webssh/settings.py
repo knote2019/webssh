@@ -49,6 +49,8 @@ define('maxconn', type=int, default=20,
        help='Maximum live connections (ssh sessions) per client')
 define('ssh_host', default='localhost', help='Default SSH host')
 define('ssh_port', type=int, default=2222, help='Default SSH port')
+define('ssh_username', default='root', help='Default SSH username')
+define('ssh_password', default='cloud1234', help='Default SSH password')
 define('font', default='', help='custom font filename')
 define('encoding', default='',
        help='''The default character encoding of ssh servers.
@@ -89,7 +91,9 @@ def get_app_settings(options):
         ),
         origin_policy=get_origin_setting(options),
         ssh_host=options.ssh_host,
-        ssh_port=options.ssh_port
+        ssh_port=options.ssh_port,
+        ssh_username=options.ssh_username,
+        ssh_password=options.ssh_password
     )
     return settings
 
