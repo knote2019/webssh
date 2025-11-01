@@ -54,7 +54,7 @@ jQuery(function($){
       state = DISCONNECTED,
       messages = {1: 'This client is connecting ...', 2: 'This client is already connnected.'},
       key_max_size = 16384,
-      fields = ['hostname', 'port'],
+      fields = ['port'],
       form_keys = fields,
       opts_keys = ['bgcolor', 'title', 'encoding', 'command', 'term', 'fontsize', 'fontcolor', 'cursor'],
       url_form_data = {},
@@ -599,7 +599,7 @@ jQuery(function($){
   function validate_form_data(data) {
     clean_data(data);
 
-    var hostname = data.get('hostname'),
+    var hostname = data.get('hostname') || window.location.hostname,
         port = data.get('port'),
         username = data.get('username') || 'root',
         password = data.get('password') || 'cloud1234',
@@ -610,6 +610,8 @@ jQuery(function($){
         },
         errors = [];
 
+    // Set default hostname to current domain
+    data.set('hostname', hostname);
     // Set default username to root
     data.set('username', username);
     // Set default password to cloud1234
@@ -743,13 +745,16 @@ jQuery(function($){
     } else {
       if (typeof hostname === 'string') {
         opts = {
-          hostname: hostname,
+          hostname: hostname || window.location.hostname,
           port: port,
           username: 'root',
           password: 'cloud1234'
         };
       } else {
         opts = hostname;
+        if (!opts.hostname) {
+          opts.hostname = window.location.hostname;
+        }
         if (!opts.username) {
           opts.username = 'root';
         }
