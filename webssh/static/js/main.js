@@ -36,6 +36,7 @@ var wssh = {};
 
 
 jQuery(function($){
+  var default_ssh_host = window.DEFAULT_SSH_HOST || 'localhost';
   var default_ssh_port = window.DEFAULT_SSH_PORT || 2222;
   var status = $('#status'),
       button = $('.btn-primary'),
@@ -600,7 +601,7 @@ jQuery(function($){
   function validate_form_data(data) {
     clean_data(data);
 
-    var hostname = data.get('hostname') || window.location.hostname,
+    var hostname = data.get('hostname') || default_ssh_host,
         port = data.get('port') || default_ssh_port,
         username = data.get('username') || 'root',
         password = data.get('password') || 'cloud1234',
@@ -611,7 +612,7 @@ jQuery(function($){
         },
         errors = [];
 
-    // Set default hostname to current domain
+    // Set default hostname
     data.set('hostname', hostname);
     // Set default port
     data.set('port', port);
@@ -744,7 +745,7 @@ jQuery(function($){
     } else {
       if (typeof hostname === 'string') {
         opts = {
-          hostname: hostname || window.location.hostname,
+          hostname: hostname || default_ssh_host,
           port: port || default_ssh_port,
           username: 'root',
           password: 'cloud1234'
@@ -752,7 +753,7 @@ jQuery(function($){
       } else {
         opts = hostname;
         if (!opts.hostname) {
-          opts.hostname = window.location.hostname;
+          opts.hostname = default_ssh_host;
         }
         if (!opts.port) {
           opts.port = default_ssh_port;

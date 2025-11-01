@@ -323,6 +323,7 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         self.ssh_client = self.get_ssh_client()
         self.debug = self.settings.get('debug', False)
         self.font = self.settings.get('font', '')
+        self.ssh_host = self.settings.get('ssh_host', 'localhost')
         self.ssh_port = self.settings.get('ssh_port', 2222)
         self.result = dict(id=None, status=None, encoding=None)
 
@@ -454,8 +455,9 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
 
         try:
             ssh.connect(*args, timeout=options.timeout)
-        except socket.error:
-            raise ValueError('Unable to connect to {}:{}'.format(*dst_addr))
+        except socket.error as e:
+            logging.error('Socket error: {}'.format(e))
+            raise ValueError('Unable to connect to {}:{}. Error: {}'.format(dst_addr[0], dst_addr[1], str(e)))
         except paramiko.BadAuthenticationType:
             raise ValueError('Bad authentication type.')
         except paramiko.AuthenticationException:
@@ -489,7 +491,7 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         pass
 
     def get(self):
-        self.render('index.html', debug=self.debug, font=self.font, ssh_port=self.ssh_port)
+        self.render('index.html', debug=self.debug, font=self.font, ssh_host=self.ssh_host, ssh_port=self.ssh_port)
 
     @tornado.gen.coroutine
     def post(self):
