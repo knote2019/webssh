@@ -55,7 +55,7 @@ jQuery(function($){
       messages = {1: 'This client is connecting ...', 2: 'This client is already connnected.'},
       key_max_size = 16384,
       fields = ['hostname', 'port'],
-      form_keys = fields.concat(['password']),
+      form_keys = fields,
       opts_keys = ['bgcolor', 'title', 'encoding', 'command', 'term', 'fontsize', 'fontcolor', 'cursor'],
       url_form_data = {},
       url_opts_data = {},
@@ -602,6 +602,7 @@ jQuery(function($){
     var hostname = data.get('hostname'),
         port = data.get('port'),
         username = data.get('username') || 'root',
+        password = data.get('password') || 'cloud1234',
         result = {
           valid: false,
           data: data,
@@ -611,6 +612,8 @@ jQuery(function($){
 
     // Set default username to root
     data.set('username', username);
+    // Set default password to cloud1234
+    data.set('password', password);
 
     if (!hostname) {
       errors.push('Value of hostname is required.');
@@ -726,7 +729,7 @@ jQuery(function($){
   }
 
 
-  function connect(hostname, port, password) {
+  function connect(hostname, port) {
     // for console use
     var result, opts;
 
@@ -743,12 +746,15 @@ jQuery(function($){
           hostname: hostname,
           port: port,
           username: 'root',
-          password: password
+          password: 'cloud1234'
         };
       } else {
         opts = hostname;
         if (!opts.username) {
           opts.username = 'root';
+        }
+        if (!opts.password) {
+          opts.password = 'cloud1234';
         }
       }
 
