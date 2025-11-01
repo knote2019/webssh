@@ -91,7 +91,7 @@ jQuery(function($){
 
 
   function populate_form(data) {
-    var names = form_keys.concat(['passphrase']),
+    var names = form_keys,
         i, name;
 
     for (i=0; i < names.length; i++) {
@@ -584,7 +584,7 @@ jQuery(function($){
 
   function clean_data(data) {
     var i, attr, val;
-    var attrs = form_keys.concat(['privatekey', 'passphrase']);
+    var attrs = form_keys;
 
     for (i = 0; i < attrs.length; i++) {
       attr = attrs[i];
@@ -602,13 +602,12 @@ jQuery(function($){
     var hostname = data.get('hostname'),
         port = data.get('port'),
         username = data.get('username'),
-        pk = data.get('privatekey'),
         result = {
           valid: false,
           data: data,
           title: ''
         },
-        errors = [], size;
+        errors = [];
 
     if (!hostname) {
       errors.push('Value of hostname is required.');
@@ -628,13 +627,6 @@ jQuery(function($){
 
     if (!username) {
       errors.push('Value of username is required.');
-    }
-
-    if (pk) {
-      size = pk.size || pk.length;
-      if (size > key_max_size) {
-        errors.push('Invalid private key: ' + pk.name || '');
-      }
     }
 
     if (!errors.length || debug) {
@@ -671,14 +663,10 @@ jQuery(function($){
   function connect_without_options() {
     // use data from the form
     var form = document.querySelector(form_id),
-        inputs = form.querySelectorAll('input[type="file"]'),
         url = form.action,
-        data, pk;
+        data;
 
-    disable_file_inputs(inputs);
     data = new FormData(form);
-    pk = data.get('privatekey');
-    enable_file_inputs(inputs);
 
     function ajax_post() {
       status.text('');
@@ -701,17 +689,7 @@ jQuery(function($){
       return;
     }
 
-    if (pk && pk.size && !debug) {
-      read_file_as_text(pk, function(text) {
-        if (text === undefined) {
-            log_status('Invalid private key: ' + pk.name);
-        } else {
-          ajax_post();
-        }
-      });
-    } else {
-      ajax_post();
-    }
+    ajax_post();
 
     return result;
   }
@@ -749,7 +727,7 @@ jQuery(function($){
   }
 
 
-  function connect(hostname, port, username, password, privatekey, passphrase, totp) {
+  function connect(hostname, port, username, password, totp) {
     // for console use
     var result, opts;
 
@@ -767,8 +745,6 @@ jQuery(function($){
           port: port,
           username: username,
           password: password,
-          privatekey: privatekey,
-          passphrase: passphrase,
           totp: totp
         };
       } else {
