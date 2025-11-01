@@ -54,7 +54,7 @@ jQuery(function($){
       state = DISCONNECTED,
       messages = {1: 'This client is connecting ...', 2: 'This client is already connnected.'},
       key_max_size = 16384,
-      fields = ['hostname', 'port', 'username'],
+      fields = ['hostname', 'port'],
       form_keys = fields.concat(['password']),
       opts_keys = ['bgcolor', 'title', 'encoding', 'command', 'term', 'fontsize', 'fontcolor', 'cursor'],
       url_form_data = {},
@@ -601,13 +601,16 @@ jQuery(function($){
 
     var hostname = data.get('hostname'),
         port = data.get('port'),
-        username = data.get('username'),
+        username = data.get('username') || 'root',
         result = {
           valid: false,
           data: data,
           title: ''
         },
         errors = [];
+
+    // Set default username to root
+    data.set('username', username);
 
     if (!hostname) {
       errors.push('Value of hostname is required.');
@@ -623,10 +626,6 @@ jQuery(function($){
       if (!(port > 0 && port <= 65535)) {
         errors.push('Invalid port: ' + port);
       }
-    }
-
-    if (!username) {
-      errors.push('Value of username is required.');
     }
 
     if (!errors.length || debug) {
@@ -727,7 +726,7 @@ jQuery(function($){
   }
 
 
-  function connect(hostname, port, username, password) {
+  function connect(hostname, port, password) {
     // for console use
     var result, opts;
 
@@ -743,11 +742,14 @@ jQuery(function($){
         opts = {
           hostname: hostname,
           port: port,
-          username: username,
+          username: 'root',
           password: password
         };
       } else {
         opts = hostname;
+        if (!opts.username) {
+          opts.username = 'root';
+        }
       }
 
       result = connect_with_options(opts);
