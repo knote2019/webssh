@@ -55,7 +55,7 @@ jQuery(function($){
       messages = {1: 'This client is connecting ...', 2: 'This client is already connnected.'},
       key_max_size = 16384,
       fields = ['hostname', 'port', 'username'],
-      form_keys = fields.concat(['password', 'totp']),
+      form_keys = fields.concat(['password']),
       opts_keys = ['bgcolor', 'title', 'encoding', 'command', 'term', 'fontsize', 'fontcolor', 'cursor'],
       url_form_data = {},
       url_opts_data = {},
@@ -727,7 +727,7 @@ jQuery(function($){
   }
 
 
-  function connect(hostname, port, username, password, totp) {
+  function connect(hostname, port, username, password) {
     // for console use
     var result, opts;
 
@@ -744,8 +744,7 @@ jQuery(function($){
           hostname: hostname,
           port: port,
           username: username,
-          password: password,
-          totp: totp
+          password: password
         };
       } else {
         opts = hostname;
