@@ -655,7 +655,8 @@ jQuery(function($){
   function connect_without_options() {
     // use data from command line options
     var form = document.createElement('form'),
-        data = new FormData(form);
+        data = new FormData(form),
+        xsrf_input = document.querySelector('input[name="_xsrf"]');
 
     // Set all values from server configuration
     data.set('hostname', default_ssh_host);
@@ -663,6 +664,11 @@ jQuery(function($){
     data.set('username', default_ssh_username);
     data.set('password', default_ssh_password);
     data.set('term', term_type);
+    
+    // Add XSRF token
+    if (xsrf_input) {
+      data.set('_xsrf', xsrf_input.value);
+    }
 
     function ajax_post() {
       status.text('');
@@ -692,7 +698,8 @@ jQuery(function($){
 
   function connect_with_options(data) {
     // use data from the arguments
-    var form = document.createElement('form');
+    var form = document.createElement('form'),
+        xsrf_input = document.querySelector('input[name="_xsrf"]');
 
     var result = validate_form_data(wrap_object(data));
     if (!result.valid) {
@@ -701,6 +708,12 @@ jQuery(function($){
     }
 
     data.term = term_type;
+    
+    // Add XSRF token
+    if (xsrf_input) {
+      data._xsrf = xsrf_input.value;
+    }
+    
     if (event_origin) {
       data._origin = event_origin;
     }

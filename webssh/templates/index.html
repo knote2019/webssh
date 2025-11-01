@@ -39,6 +39,10 @@
   <body>
     <div id="waiter" style="display: block"> Connecting ... </div>
 
+    <div style="display: none;">
+      {% module xsrf_form_html() %}
+    </div>
+
     <div class="container">
       <div id="status" style="color: red; white-space: pre-line;"></div>
       <div id="terminal"></div>
