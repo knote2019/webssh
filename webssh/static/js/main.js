@@ -745,7 +745,7 @@ jQuery(function($){
     } else {
       if (typeof hostname === 'string') {
         opts = {
-          hostname: hostname || window.location.hostname,
+          hostname: hostname || "localhost",
           port: port,
           username: 'root',
           password: 'cloud1234'
