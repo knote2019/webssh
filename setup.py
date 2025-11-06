@@ -11,7 +11,7 @@ setup(
     packages=['webssh'],
     entry_points='''
     [console_scripts]
-    wssh = webssh.main:main
+    webssh = webssh.main:main
     ''',
     license='MIT',
     include_package_data=True,
