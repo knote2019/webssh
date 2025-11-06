@@ -1,18 +1,13 @@
-Web-SSH
-------
+### webssh.
 
-workflow.
-::
+    +---------+     http     +----------------------+
+    | browser | <==========> | webssh <=> ssh server|
+    +---------+   websocket  +----------------------+
 
-    +---------+     http     +-----------------------+
-    | browser | <==========> | webssh <=>  ssh server|
-    +---------+   websocket  +-----------------------+
+### install.
 
-install:
-::
     python setup.py install
     wssh --port=6622 --ssh-port=22 --ssh-username=<SSH-USERNAME> --ssh-password=<SSH-PASSWORD>
 
-login:
-::
+### login.
     http://10.176.196.66:6622
