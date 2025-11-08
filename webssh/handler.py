@@ -323,7 +323,7 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         self.ssh_client = self.get_ssh_client()
         self.debug = self.settings.get('debug', False)
         self.font = self.settings.get('font', '')
-        self.ssh_host = self.settings.get('ssh_host', 'localhost')
+        self.ssh_host = self.settings.get('ssh_host', '127.0.0.1')
         self.ssh_port = self.settings.get('ssh_port', 2222)
         self.ssh_username = self.settings.get('ssh_username', 'root')
         self.ssh_password = self.settings.get('ssh_password', 'cloud1234')
