@@ -8,7 +8,7 @@
 
 step1: install ssh server:
 
-    apt-get install -y openssh-server > /dev/null 2>&1 || exit 1
+    apt-get install -y openssh-server
     sed -i 's/#Port.*/Port 5522/' /etc/ssh/sshd_config
     sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
     sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
@@ -26,4 +26,4 @@ step2: install webssh server:
     webssh --port=6622 --ssh-port=5522 --ssh-username=root --ssh-password=cloud1234
 
 ### login.
-    http://127.0.0.1:6622
+    http://10.118.5.99:6622
