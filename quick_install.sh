@@ -6,15 +6,10 @@ SSH_PORT=${SSH_PORT:-5522}
 WEB_SSH_PORT=${WEB_SSH_PORT:-6622}
 
 echo "========================================================================="
-echo "Starting installation of SSH and WebSSH ..."
+echo "start to install WebSSH ..."
 echo "========================================================================="
-
-echo "-------------------------------------------------------------------------"
-echo "Step 1: Installing SSH ..."
 apt-get update -qq
 apt-get install -y openssh-server > /dev/null 2>&1 || exit 1
-
-echo "Configuring SSH ..."
 sed -i "s/#Port.*/Port $SSH_PORT/" /etc/ssh/sshd_config
 sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
@@ -26,13 +21,6 @@ mkdir -p /run/sshd
 /usr/sbin/sshd -q
 echo "SSH started (Port: $SSH_PORT)"
 
-echo "-------------------------------------------------------------------------"
-echo "Step 2: Installing WebSSH ..."
 python setup.py install > /dev/null 2>&1 || exit 1
-
 webssh --port="$WEB_SSH_PORT" --ssh-port="$SSH_PORT" --ssh-username="$SSH_USERNAME" --ssh-password="$SSH_PASSWORD" &
-echo "SSH started (Port: $WEB_SSH_PORT)"
-
-echo ""
-echo "Installation completed!"
-echo ""
+echo "WebSSH started (Port: $WEB_SSH_PORT)"
