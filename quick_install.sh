@@ -6,8 +6,8 @@ SSH_PORT=${SSH_PORT:-5522}
 WEB_SSH_PORT=${WEB_SSH_PORT:-6622}
 
 echo "========================================================================="
-echo "start to install WebSSH ..."
-echo "========================================================================="
+echo "WebSSH:"
+
 apt-get update -qq
 apt-get install -y openssh-server > /dev/null 2>&1 || exit 1
 sed -i "s/#Port.*/Port $SSH_PORT/" /etc/ssh/sshd_config
@@ -24,3 +24,5 @@ echo "SSH started (Port: $SSH_PORT)"
 python setup.py install > /dev/null 2>&1 || exit 1
 webssh --port="$WEB_SSH_PORT" --ssh-port="$SSH_PORT" --ssh-username="$SSH_USERNAME" --ssh-password="$SSH_PASSWORD" &
 echo "WebSSH started (Port: $WEB_SSH_PORT)"
+
+echo "========================================================================="
