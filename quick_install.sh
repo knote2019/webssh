@@ -12,7 +12,7 @@ echo "========================================================================="
 echo "-------------------------------------------------------------------------"
 echo "Step 1: Installing SSH ..."
 apt-get update -qq
-apt-get install -y openssh-server
+apt-get install -y openssh-server > /dev/null 2>&1 || exit 1
 
 echo "Configuring SSH ..."
 sed -i "s/#Port.*/Port $SSH_PORT/" /etc/ssh/sshd_config
@@ -28,7 +28,7 @@ echo "SSH started (Port: $SSH_PORT)"
 
 echo "-------------------------------------------------------------------------"
 echo "Step 2: Installing WebSSH ..."
-python setup.py install
+python setup.py install > /dev/null 2>&1 || exit 1
 
 webssh --port="$WEB_SSH_PORT" --ssh-port="$SSH_PORT" --ssh-username="$SSH_USERNAME" --ssh-password="$SSH_PASSWORD" &
 echo "SSH started (Port: $WEB_SSH_PORT)"
