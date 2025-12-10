@@ -1,10 +1,12 @@
-### webssh.
+### 1. webssh.
 
     +---------+     http     +----------------------+
     | browser | <==========> | webssh <=> ssh server|
     +---------+   websocket  +----------------------+
 
-### install.
+### 2. install.
+
+#### way1:
 
 step1: install ssh server:
 
@@ -20,10 +22,22 @@ step1: install ssh server:
 
 step2: install webssh server:
 
-    git clone https://github.com/knote2019/webssh.git
+    git clone https://gitlab-master.nvidia.com/dlswqa/modelopt/webssh.git
     cd webssh
     python setup.py install
     webssh --port=6622 --ssh-port=5522 --ssh-username=root --ssh-password=cloud1234
 
-### login.
+#### way2:
+
+    git clone https://gitlab-master.nvidia.com/dlswqa/modelopt/webssh.git
+    cd webssh
+
+    export SSH_USERNAME=root
+    export SSH_PASSWORD=cloud1234
+    export SSH_PORT=5522
+    export WEB_SSH_PORT=6622
+
+    bash quick_install.sh
+
+### 3. login.
     http://10.118.5.99:6622
