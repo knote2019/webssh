@@ -1,6 +1,7 @@
 import logging
 import tornado.web
 import tornado.ioloop
+import tornado.httpserver
 
 from tornado.options import options
 from webssh import handler
@@ -29,14 +30,24 @@ def make_app(handlers, settings):
 
 
 def app_listen(app, port, address, server_settings):
-    app.listen(port, address, **server_settings)
+    # Use HTTPServer explicitly for better timeout control on ARM devices
+    server = tornado.httpserver.HTTPServer(app, **server_settings)
+    server.listen(port, address)
+    
     if not server_settings.get('ssl_options'):
         server_type = 'http'
     else:
         server_type = 'https'
         handler.redirecting = True if options.redirect else False
+    
     logging.info(
-        'Listening on {}:{} ({})'.format(address, port, server_type)
+        'Listening on {}:{} ({})'.format(address or '0.0.0.0', port, server_type)
+    )
+    logging.info(
+        'Timeout settings - idle: {}s, body: {}s'.format(
+            server_settings.get('idle_connection_timeout', 'default'),
+            server_settings.get('body_timeout', 'default')
+        )
     )
 
 

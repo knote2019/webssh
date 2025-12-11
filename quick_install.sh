@@ -7,6 +7,8 @@ WEB_SSH_PORT=${WEB_SSH_PORT:-6622}
 SSH_TIMEOUT=${SSH_TIMEOUT:-30}
 WS_PING_INTERVAL=${WS_PING_INTERVAL:-30}
 WORKER_DELAY=${WORKER_DELAY:-10}
+HTTP_IDLE_TIMEOUT=${HTTP_IDLE_TIMEOUT:-300}
+HTTP_BODY_TIMEOUT=${HTTP_BODY_TIMEOUT:-60}
 
 echo "========================================================================="
 echo "WebSSH:"
@@ -25,7 +27,15 @@ mkdir -p /run/sshd
 echo "SSH started (Port: $SSH_PORT)"
 
 python setup.py install > /dev/null 2>&1 || exit 1
-webssh --port="$WEB_SSH_PORT" --ssh-port="$SSH_PORT" --ssh-username="$SSH_USERNAME" --ssh-password="$SSH_PASSWORD" --timeout="$SSH_TIMEOUT" --wpintvl="$WS_PING_INTERVAL" --delay="$WORKER_DELAY" &
+webssh --port="$WEB_SSH_PORT" \
+       --ssh-port="$SSH_PORT" \
+       --ssh-username="$SSH_USERNAME" \
+       --ssh-password="$SSH_PASSWORD" \
+       --timeout="$SSH_TIMEOUT" \
+       --wpintvl="$WS_PING_INTERVAL" \
+       --delay="$WORKER_DELAY" \
+       --idle-timeout="$HTTP_IDLE_TIMEOUT" \
+       --body-timeout="$HTTP_BODY_TIMEOUT" &
 echo "WebSSH started (Port: $WEB_SSH_PORT)"
 
 echo "========================================================================="
