@@ -42,9 +42,9 @@ define('origin', default='same', help='''Origin policy,
 '<domains>': custom domains policy, matches any domain in the <domains> list
 separated by comma;
 '*': wildcard policy, matches any domain, allowed in debug mode only.''')
-define('wpintvl', type=float, default=0, help='Websocket ping interval')
-define('timeout', type=float, default=3, help='SSH connection timeout')
-define('delay', type=float, default=3, help='The delay to call recycle_worker')
+define('wpintvl', type=float, default=30, help='Websocket ping interval')
+define('timeout', type=float, default=30, help='SSH connection timeout')
+define('delay', type=float, default=10, help='The delay to call recycle_worker')
 define('maxconn', type=int, default=20,
        help='Maximum live connections (ssh sessions) per client')
 define('ssh_host', default='localhost', help='Default SSH host')
