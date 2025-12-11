@@ -1,45 +1,45 @@
-# ARM WebSSH 超时配置速查表
+# ARM WebSSH Timeout Configuration Quick Reference
 
-## 快速修复
+## Quick Fix
 
 ```bash
-# 停止现有服务
+# Stop existing service
 pkill webssh
 
-# 重新启动（应用新配置）
+# Restart (apply new configuration)
 bash quick_install.sh
 ```
 
-## 所有超时参数一览
+## All Timeout Parameters Overview
 
-| 参数 | 位置 | 默认值 | 作用 | 推荐值 |
-|------|------|--------|------|--------|
-| `idle_timeout` | HTTP层 | 300秒 | HTTP Keep-Alive空闲超时 | 300-600秒 |
-| `body_timeout` | HTTP层 | 60秒 | HTTP请求体读取超时 | 60-120秒 |
-| `header_timeout` | HTTP层 | 60秒 | HTTP请求头读取超时 | 60秒 |
-| `wpintvl` | WebSocket层 | 30秒 | WebSocket心跳间隔 | 30秒 |
-| `timeout` | SSH层 | 30秒 | SSH连接建立超时 | 30-60秒 |
-| `delay` | Worker层 | 10秒 | Worker回收延迟 | 10-20秒 |
-| `ClientAliveInterval` | SSH服务器 | 60秒 | SSH keepalive间隔 | 60秒 |
+| Parameter | Layer | Default | Purpose | Recommended |
+|-----------|-------|---------|---------|-------------|
+| `idle_timeout` | HTTP | 300s | HTTP Keep-Alive idle timeout | 300-600s |
+| `body_timeout` | HTTP | 60s | HTTP request body read timeout | 60-120s |
+| `header_timeout` | HTTP | 60s | HTTP request header read timeout | 60s |
+| `wpintvl` | WebSocket | 30s | WebSocket heartbeat interval | 30s |
+| `timeout` | SSH | 30s | SSH connection establishment timeout | 30-60s |
+| `delay` | Worker | 10s | Worker recycle delay | 10-20s |
+| `ClientAliveInterval` | SSH Server | 60s | SSH keepalive interval | 60s |
 
-## 命令行参数对照表
+## Command Line Parameter Reference
 
-| 环境变量 | 命令行参数 | 对应配置 |
-|---------|-----------|---------|
+| Environment Variable | Command Line Parameter | Configuration |
+|---------------------|------------------------|---------------|
 | `HTTP_IDLE_TIMEOUT` | `--idle-timeout` | `idle_timeout` |
 | `HTTP_BODY_TIMEOUT` | `--body-timeout` | `body_timeout` |
 | `SSH_TIMEOUT` | `--timeout` | `timeout` |
 | `WS_PING_INTERVAL` | `--wpintvl` | `wpintvl` |
 | `WORKER_DELAY` | `--delay` | `delay` |
 
-## 常见场景配置
+## Common Scenario Configurations
 
-### 场景1：默认配置（适合大多数ARM设备）
+### Scenario 1: Default Configuration (Suitable for Most ARM Devices)
 ```bash
 bash quick_install.sh
 ```
 
-### 场景2：极慢的ARM设备
+### Scenario 2: Very Slow ARM Device
 ```bash
 HTTP_IDLE_TIMEOUT=0 \
 HTTP_BODY_TIMEOUT=180 \
@@ -48,14 +48,14 @@ WORKER_DELAY=30 \
 bash quick_install.sh
 ```
 
-### 场景3：网络不稳定
+### Scenario 3: Unstable Network
 ```bash
 HTTP_IDLE_TIMEOUT=600 \
 WS_PING_INTERVAL=20 \
 bash quick_install.sh
 ```
 
-### 场景4：调试模式
+### Scenario 4: Debug Mode
 ```bash
 webssh --port=6622 \
        --timeout=120 \
@@ -64,63 +64,63 @@ webssh --port=6622 \
        --debug=True
 ```
 
-## 验证命令
+## Verification Commands
 
 ```bash
-# 1. 检查服务运行
+# 1. Check service running
 ps aux | grep webssh
 
-# 2. 检查端口监听
+# 2. Check port listening
 netstat -tlnp | grep 6622
 
-# 3. 测试HTTP连接
+# 3. Test HTTP connection
 curl -I http://localhost:6622
 
-# 4. 查看日志中的超时配置
-# 应该看到：Timeout settings - idle: XXXs, body: XXXs
+# 4. View timeout configuration in logs
+# Should see: Timeout settings - idle: XXXs, body: XXXs
 ```
 
-## 修改的文件
+## Modified Files
 
-- ✅ `webssh/settings.py` - 3个新参数
-- ✅ `webssh/main.py` - HTTPServer + 日志
-- ✅ `quick_install.sh` - 2个新环境变量
+- ✅ `webssh/settings.py` - 3 new parameters
+- ✅ `webssh/main.py` - HTTPServer + logging
+- ✅ `quick_install.sh` - 2 new environment variables
 
-## 问题诊断
+## Problem Diagnosis
 
-| 问题 | 可能原因 | 解决方案 |
-|------|---------|---------|
-| ERR_CONNECTION_TIMED_OUT | HTTP连接超时 | 增加 `idle_timeout` 和 `body_timeout` |
-| WebSocket断开 | 缺少心跳 | 检查 `wpintvl=30` |
-| SSH连接失败 | SSH超时太短 | 增加 `timeout` 到60或90 |
-| 连接建立后立即断开 | Worker被回收 | 增加 `delay` 到20或30 |
+| Problem | Possible Cause | Solution |
+|---------|---------------|----------|
+| ERR_CONNECTION_TIMED_OUT | HTTP connection timeout | Increase `idle_timeout` and `body_timeout` |
+| WebSocket disconnects | Missing heartbeat | Check `wpintvl=30` |
+| SSH connection fails | SSH timeout too short | Increase `timeout` to 60 or 90 |
+| Disconnects immediately after connection | Worker recycled | Increase `delay` to 20 or 30 |
 
-## 关键修改点
+## Key Modification Points
 
-### settings.py (第50-55行)
+### settings.py (Lines 50-55)
 ```python
 define('header_timeout', type=float, default=60, ...)
 define('body_timeout', type=float, default=60, ...)
 define('idle_timeout', type=float, default=300, ...)
 ```
 
-### settings.py (第108-109行)
+### settings.py (Lines 108-109)
 ```python
 idle_connection_timeout=options.idle_timeout,
 body_timeout=options.body_timeout
 ```
 
-### main.py (第4行)
+### main.py (Line 4)
 ```python
 import tornado.httpserver
 ```
 
-### main.py (第34行)
+### main.py (Line 34)
 ```python
 server = tornado.httpserver.HTTPServer(app, **server_settings)
 ```
 
-### quick_install.sh (第10-11, 37-38行)
+### quick_install.sh (Lines 10-11, 37-38)
 ```bash
 HTTP_IDLE_TIMEOUT=${HTTP_IDLE_TIMEOUT:-300}
 HTTP_BODY_TIMEOUT=${HTTP_BODY_TIMEOUT:-60}
@@ -128,4 +128,3 @@ HTTP_BODY_TIMEOUT=${HTTP_BODY_TIMEOUT:-60}
 --idle-timeout="$HTTP_IDLE_TIMEOUT" \
 --body-timeout="$HTTP_BODY_TIMEOUT" &
 ```
-
