@@ -42,11 +42,17 @@ define('origin', default='same', help='''Origin policy,
 '<domains>': custom domains policy, matches any domain in the <domains> list
 separated by comma;
 '*': wildcard policy, matches any domain, allowed in debug mode only.''')
-define('wpintvl', type=float, default=0, help='Websocket ping interval')
-define('timeout', type=float, default=3, help='SSH connection timeout')
-define('delay', type=float, default=3, help='The delay to call recycle_worker')
+define('wpintvl', type=float, default=30, help='Websocket ping interval')
+define('timeout', type=float, default=30, help='SSH connection timeout')
+define('delay', type=float, default=10, help='The delay to call recycle_worker')
 define('maxconn', type=int, default=20,
        help='Maximum live connections (ssh sessions) per client')
+define('header_timeout', type=float, default=60,
+       help='HTTP header read timeout for slow ARM devices')
+define('body_timeout', type=float, default=60,
+       help='HTTP body read timeout for slow ARM devices')
+define('idle_timeout', type=float, default=300,
+       help='Idle connection timeout (0 means no timeout)')
 define('ssh_host', default='localhost', help='Default SSH host')
 define('ssh_port', type=int, default=2222, help='Default SSH port')
 define('ssh_username', default='root', help='Default SSH username')
@@ -102,7 +108,10 @@ def get_server_settings(options):
     settings = dict(
         xheaders=options.xheaders,
         max_body_size=max_body_size,
-        trusted_downstream=get_trusted_downstream(options.tdstream)
+        trusted_downstream=get_trusted_downstream(options.tdstream),
+        # HTTP connection timeouts for ARM devices
+        idle_connection_timeout=options.idle_timeout,
+        body_timeout=options.body_timeout
     )
     return settings
 

@@ -14,8 +14,8 @@ step1: install ssh server:
     sed -i 's/#Port.*/Port 5522/' /etc/ssh/sshd_config
     sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
     sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-    sed -i 's/#ClientAliveInterval.*/ClientAliveInterval 0/' /etc/ssh/sshd_config
-    sed -i 's/#ClientAliveCountMax.*/ClientAliveCountMax 0/' /etc/ssh/sshd_config
+    sed -i 's/#ClientAliveInterval.*/ClientAliveInterval 60/' /etc/ssh/sshd_config
+    sed -i 's/#ClientAliveCountMax.*/ClientAliveCountMax 3/' /etc/ssh/sshd_config
     echo 'root:cloud1234' | chpasswd
     mkdir -p /run/sshd
     /usr/sbin/sshd -q
